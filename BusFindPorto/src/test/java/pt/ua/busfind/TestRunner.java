@@ -9,7 +9,8 @@ import org.junit.runner.RunWith;
  * @author esP13
  */
 @RunWith(Cucumber.class)
-@CucumberOptions(features = "src/test/resources", glue = "src/test/java/pt/ua/busfind")
+@CucumberOptions(features = {"src/test/resources/pt/ua/busfind", 
+                             "src/test/java/pt/ua/busfind/"})
 public class TestRunner {
     
 }

@@ -10,23 +10,34 @@ import io.cucumber.java.en.When;
  * @author esP13
  */
 public class StepDefinitions {
-    @Given("The bus number is {int}")
-    public void the_bus_number_is(int busNumber) {
-        System.out.format("Bus: %n\n", busNumber);
+    @Given("the bus number is {string}")
+    public void the_bus_number_is(String string) {
+        // Write code here that turns the phrase above into concrete actions
+        // throw new io.cucumber.java.PendingException();
+        System.out.println("bus: " + string);
     }
-    
-    @When("The timestamp is {int}")
-    public void the_timestamp_is(int ts) {
-        System.out.format("Timestamp: %n\n", ts);
+
+    @When("the timestamp is {string}")
+    public void the_timestamp_is(String string) {
+        // Write code here that turns the phrase above into concrete actions
+        // throw new io.cucumber.java.PendingException();
+        System.out.println("timestamp: " + string);
+
     }
-    
-    @Then("The bus longitude is {int}")
-    public void the_longitude_is(int lon) {
-        System.out.format("Longitude: %n\n", lon);
+
+    @Then("the bus longitude is {double}")
+    public void the_bus_longitude_is(Double double1) {
+        // Write code here that turns the phrase above into concrete actions
+        // throw new io.cucumber.java.PendingException();
+        System.out.println("long: " + double1);
+
     }
-    
-    @And("The bus latitude is {int}")
-    public void the_latitude_is(int lat) {
-        System.out.format("Latitude: %n\n", lat);
+
+    @And("the bus latitude is {double}")
+    public void the_bus_latitude_is(Double double1) {
+        // Write code here that turns the phrase above into concrete actions
+        // throw new io.cucumber.java.PendingException();
+        System.out.println("lat: " + double1);
+
     }
 }
