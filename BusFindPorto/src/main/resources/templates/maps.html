@@ -391,10 +391,38 @@ The above copyright notice and this permission notice shall be included in all c
         
         <script>
             function initMap(){
+                function initMap(){
                 var options = {
-                    zoom: 8,
-                    center:{lat: 40.630038, lng:-8.657125}
+                    zoom: 12,
+                    center:{lat: 41.158004, lng:-8.629649}
                 }
+                
+                var map = new google.maps.Map(document.getElementById('map'), options);
+                
+                /*for(let bus in $[{busList}]   ){
+                    addMarker(bus.lat, bus.lon, bus.id, map);
+                }*/
+               
+             addMarker( 41.158004, -8.629649 , 'INFO WINDOW' , map);
+                  
+                
+        
+                
+            }
+            function addMarker (lat, lng, info , map){
+                var marker = new google.maps.Marker({
+                    position: {lat: lat, lng:lng},
+                    map: map,
+                    icon: {url: 'https://image.flaticon.com/icons/png/512/1165/1165961.png' ,scaledSize: new google.maps.Size(30,30) }
+                });
+                
+               var infoWindow = new google.maps.InfoWindow({
+                    content: '<h3>'+info+'</h3>'
+                });
+                marker.addListener('click', function(){
+                   infoWindow.open(map, marker); 
+                });
+            }
                 
                 var map = new google.maps.Map(document.getElementById('map'), options);
             }
