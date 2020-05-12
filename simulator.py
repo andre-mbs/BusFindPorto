@@ -3,8 +3,8 @@ from json import dumps
 from kafka import KafkaProducer
 
 def main():
-	producer = KafkaProducer(bootstrap_servers=['192.168.160.103:13092'], value_serializer=lambda x: dumps(x).encode('utf-8'))
-	#producer = KafkaProducer(bootstrap_servers=['localhost:9092'], value_serializer=lambda x: dumps(x).encode('utf-8'))
+	#producer = KafkaProducer(bootstrap_servers=['192.168.160.103:13092'], value_serializer=lambda x: dumps(x).encode('utf-8'))
+	producer = KafkaProducer(bootstrap_servers=['localhost:9092'], value_serializer=lambda x: dumps(x).encode('utf-8'))
 	with open("node_data_2018_10_08____2018_10_14.csv", encoding='utf-8') as f:
 		for line in f:
 			print(line)

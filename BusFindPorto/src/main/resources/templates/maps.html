@@ -127,7 +127,24 @@ The above copyright notice and this permission notice shall be included in all c
                 <!-- End Navbar -->
                 <div class="content">
                     <div class="container-fluid">
-                        <div id="map" style="height: 400px; width: 100%;"></div>
+                        <div class="row">
+                            <div class="col-sm-1">
+                                <div class="form-group">
+                                    <form method="post" th:object="${selectedID}">
+                                        <label for="sel1">Bus Number: </label>
+                                        <select class="form-control" id="nodeID" name="nodeID">
+                                            <option value="all">All</option>
+                                            <option th:each="id : ${ids}" th:value="${id}" th:utext="${id}"/>
+                                        </select>
+                                        <button type="submit" class="btn btn-primary">Search</button>
+                                    </form>
+                                </div>
+                            </div>
+                            <div class="col-sm-11">
+                                <div id="map" style="height: 800px; width: 100%; margin: 0px;"></div>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
                 <footer class="footer">
@@ -201,7 +218,7 @@ The above copyright notice and this permission notice shall be included in all c
         <!-- Library for adding dinamically elements -->
         <script src="/js/plugins/arrive.min.js"></script>
         <!--  Google Maps Plugin    -->
-<!--        <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_KEY_HERE"></script>-->
+        <!--        <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_KEY_HERE"></script>-->
         <!-- Chartist JS -->
         <script src="/js/plugins/chartist.min.js"></script>
         <!--  Notifications Plugin    -->
@@ -388,43 +405,45 @@ The above copyright notice and this permission notice shall be included in all c
 
             });
         </script>
-        
-        <script>
-            function initMap(){
-                function initMap(){
+
+        <script th:inline="javascript">
+            function initMap() {
                 var options = {
                     zoom: 12,
-                    center:{lat: 41.158004, lng:-8.629649}
+                    center: {lat: 41.158004, lng: -8.629649}
                 }
-                
+
                 var map = new google.maps.Map(document.getElementById('map'), options);
-                
-                /*for(let bus in $[{busList}]   ){
-                    addMarker(bus.lat, bus.lon, bus.id, map);
-                }*/
-               
-             addMarker( 41.158004, -8.629649 , 'INFO WINDOW' , map);
-                  
-                
-        
-                
+
+                /*<![CDATA[*/
+
+                var jsonBusList = JSON.parse(/*[[${jsonBusList}]]*/);
+
+                for (i=0; i<jsonBusList.length; i++) {
+                    console.log(jsonBusList[i].lat, jsonBusList[i].lon, jsonBusList[i].id);
+                    //console.log(bus);
+                    addMarker(jsonBusList[i].lat, jsonBusList[i].lon, jsonBusList[i].id, map);
+                }
+
+                //addMarker( 41.158004, -8.629649 , 'INFO WINDOW' , map);
+
+                /*]]>*/
             }
-            function addMarker (lat, lng, info , map){
+            function addMarker(lat, lng, info, map) {
                 var marker = new google.maps.Marker({
-                    position: {lat: lat, lng:lng},
+                    position: {lat: lat, lng: lng},
                     map: map,
-                    icon: {url: 'https://image.flaticon.com/icons/png/512/1165/1165961.png' ,scaledSize: new google.maps.Size(30,30) }
+                    icon: {url: 'https://image.flaticon.com/icons/png/512/1165/1165961.png', scaledSize: new google.maps.Size(30, 30)}
                 });
-                
-               var infoWindow = new google.maps.InfoWindow({
-                    content: '<h3>'+info+'</h3>'
+
+                var infoWindow = new google.maps.InfoWindow({
+                    content: '<h3>' + info + '</h3>'
                 });
-                marker.addListener('click', function(){
-                   infoWindow.open(map, marker); 
+                marker.addListener('click', function () {
+                    infoWindow.open(map, marker);
                 });
-            }
-                
-                var map = new google.maps.Map(document.getElementById('map'), options);
+
+                //var map = new google.maps.Map(document.getElementById('map'), options);
             }
         </script>
         <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAhqVD46AX9PWogNA0LzAjwQKEKIaVgSbU&callback=initMap"></script>
