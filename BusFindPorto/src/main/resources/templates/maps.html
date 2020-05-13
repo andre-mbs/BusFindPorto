@@ -418,11 +418,29 @@ The above copyright notice and this permission notice shall be included in all c
                 /*<![CDATA[*/
 
                 var jsonBusList = JSON.parse(/*[[${jsonBusList}]]*/);
+                var busPath = [];
+                
 
                 for (i=0; i<jsonBusList.length; i++) {
+                    
+                    if(!/*[[${allFlag}]]*/){
+                        busPath.push({lat: jsonBusList[i].lat, lng: jsonBusList[i].lon});
+                    }
+                    
                     console.log(jsonBusList[i].lat, jsonBusList[i].lon, jsonBusList[i].id);
                     //console.log(bus);
                     addMarker(jsonBusList[i].lat, jsonBusList[i].lon, jsonBusList[i].id, map);
+                }
+                
+                if(!/*[[${allFlag}]]*/){
+                    var flightPath = new google.maps.Polyline({
+                        map: map,
+                        path: busPath,
+                        geodesic: true,
+                        strokeColor: '#0000FF',
+                        strokeOpacity: 1.0,
+                        strokeWeight: 3
+                      });
                 }
 
                 //addMarker( 41.158004, -8.629649 , 'INFO WINDOW' , map);

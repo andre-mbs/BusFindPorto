@@ -72,6 +72,9 @@ public class BusFindController {
     public String maps(Model model, @RequestParam(name = "nodeID", required = false, defaultValue = "all") String nodeID) {
         System.out.println("\nFrom the demo controller: maps\n" + nodeID);
 
+        boolean allFag = false;
+        String jsonBusList = "";
+        
         Iterable<Bus> busList = br.findAll();
         Set<String> ids = getNodeIds(busList);
         model.addAttribute("ids", ids);
@@ -79,19 +82,26 @@ public class BusFindController {
         ObjectMapper mapper = new ObjectMapper();
 
         if (nodeID.equals("all")) {
-
+            try {
+                allFag = true;
+                jsonBusList = mapper.writeValueAsString(busList);
+            } catch (JsonProcessingException ex) {
+                Logger.getLogger(BusFindController.class.getName()).log(Level.SEVERE, null, ex);
+            }
         } else {
             try {
                 List<Bus> busListFiltered = getBusByNodeId(busList, nodeID);
-                String jsonBusList = mapper.writeValueAsString(busListFiltered);
-                System.out.println(jsonBusList);
-                model.addAttribute("jsonBusList", jsonBusList);
+                jsonBusList = mapper.writeValueAsString(busListFiltered);  
             } catch (JsonProcessingException ex) {
                 Logger.getLogger(BusFindController.class.getName()).log(Level.SEVERE, null, ex);
             }
 
         }
-
+        
+        System.out.println(jsonBusList);
+        model.addAttribute("jsonBusList", jsonBusList);
+        model.addAttribute("allFlag", allFag);
+        
         return "maps";
     }
 
