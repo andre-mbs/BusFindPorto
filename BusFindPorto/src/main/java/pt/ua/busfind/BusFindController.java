@@ -3,6 +3,7 @@ package pt.ua.busfind;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -27,31 +28,31 @@ public class BusFindController {
 
     @RequestMapping({"/", "busList"})
     public String busList(Model model) {
-        System.out.println("\nFrom the demo controller: busList\n");
+        System.out.println("From the controller: busList");
 
         Iterable<Bus> busList = br.findAll();
         model.addAttribute("busList", busList);
 
-        Set<String> ids = getNodeIds(busList);
+        List<Integer> ids = getLocationIds(busList);
         model.addAttribute("ids", ids);
 
         return "dashboard";
     }
 
     @PostMapping({"/", "busList"})
-    public String busList(Model model, @RequestParam(name = "nodeID", required = false, defaultValue = "all") String nodeID) {
+    public String busList(Model model, @RequestParam(name = "nodeID", required = false, defaultValue = "all") String locationId) {
         System.out.println("\nFrom the demo controller: busList\n");
 
         Iterable<Bus> busList = br.findAll();
 
-        if (nodeID.equals("all")) {
+        if (locationId.equals("all")) {
             model.addAttribute("busList", busList);
         } else {
-            List<Bus> busListFiltered = getBusByNodeId(busList, nodeID);
+            List<Bus> busListFiltered = getBusByLocationId(busList, Integer.parseInt(locationId));
             model.addAttribute("busList", busListFiltered);
         }
 
-        Set<String> ids = getNodeIds(busList);
+        List<Integer> ids = getLocationIds(busList);
         model.addAttribute("ids", ids);
 
         return "dashboard";
@@ -59,29 +60,29 @@ public class BusFindController {
 
     @RequestMapping("maps")
     public String maps(Model model) {
-        System.out.println("\nFrom the demo controller: maps\n");
+        System.out.println("From the controller: maps");
 
         Iterable<Bus> busList = br.findAll();
-        Set<String> ids = getNodeIds(busList);
+        List<Integer> ids = getLocationIds(busList);
         model.addAttribute("ids", ids);
 
         return "maps";
     }
 
     @PostMapping("maps")
-    public String maps(Model model, @RequestParam(name = "nodeID", required = false, defaultValue = "all") String nodeID) {
-        System.out.println("\nFrom the demo controller: maps\n" + nodeID);
+    public String maps(Model model, @RequestParam(name = "nodeID", required = false, defaultValue = "all") String locationId) {
+        System.out.println("From the controller: maps");
 
         boolean allFag = false;
         String jsonBusList = "";
         
         Iterable<Bus> busList = br.findAll();
-        Set<String> ids = getNodeIds(busList);
+        List<Integer> ids = getLocationIds(busList);
         model.addAttribute("ids", ids);
 
         ObjectMapper mapper = new ObjectMapper();
 
-        if (nodeID.equals("all")) {
+        if (locationId.equals("all")) {
             try {
                 allFag = true;
                 jsonBusList = mapper.writeValueAsString(busList);
@@ -90,7 +91,7 @@ public class BusFindController {
             }
         } else {
             try {
-                List<Bus> busListFiltered = getBusByNodeId(busList, nodeID);
+                List<Bus> busListFiltered = getBusByLocationId(busList, Integer.parseInt(locationId));
                 jsonBusList = mapper.writeValueAsString(busListFiltered);  
             } catch (JsonProcessingException ex) {
                 Logger.getLogger(BusFindController.class.getName()).log(Level.SEVERE, null, ex);
@@ -101,22 +102,26 @@ public class BusFindController {
         System.out.println(jsonBusList);
         model.addAttribute("jsonBusList", jsonBusList);
         model.addAttribute("allFlag", allFag);
+        model.addAttribute("locationIdText", locationId);
         
         return "maps";
     }
 
-    private Set<String> getNodeIds(Iterable<Bus> busList) {
-        Set<String> ids = new HashSet<>();
+    private List<Integer> getLocationIds(Iterable<Bus> busList) {
+        Set<Integer> ids = new HashSet<>();
         for (Bus b : busList) {
-            ids.add(b.getNode_id());
+            ids.add(b.getLocation_id());
         }
-        return ids;
+        
+        List<Integer> idsList = new ArrayList<>(ids);
+        Collections.sort(idsList);
+        return idsList;
     }
 
-    private List<Bus> getBusByNodeId(Iterable<Bus> busList, String nodeId) {
+    private List<Bus> getBusByLocationId(Iterable<Bus> busList, int locationId) {
         List<Bus> busListFiltered = new ArrayList<>();
         for (Bus b : busList) {
-            if (b.getNode_id().equals(nodeId)) {
+            if (b.getLocation_id() == locationId) {
                 busListFiltered.add(b);
             }
         }
