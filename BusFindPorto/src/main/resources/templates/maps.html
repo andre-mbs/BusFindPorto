@@ -143,11 +143,13 @@ The above copyright notice and this permission notice shall be included in all c
                                 <button type="submit" form="search-form" class="btn btn-primary">Search</button>
                             </div>
                             <div class="col-lg-4 my-auto">
-                                <h3 style="text-align: right;">Current Location: </h3>
+                                <h3 style="text-align: right;" id="current_bus"></h3>
+                                <h3 style="text-align: right;" id="average_speed"> </h3>
+
                             </div>
-                            <div class="col-lg-5 my-auto">
+                           <!--<div class="col-lg-5 my-auto">
                                 <h3 style="text-align: left;" th:utext="${locationIdText}"></h3>
-                            </div>
+                            </div>-->
                         </div>
                         <div class="row">
                             <div class="col-sm-12">
@@ -430,15 +432,31 @@ The above copyright notice and this permission notice shall be included in all c
 
                 var jsonBusList = JSON.parse(/*[[${jsonBusList}]]*/);
                 var busPath = [];
+                var averageSpeed=0;
+                var av_sum=0;
+                var av_count=0;
+                var id;
                 
                 for (i=0; i<jsonBusList.length; i++) {
                     if(!/*[[${allFlag}]]*/){
                         busPath.push({lat: jsonBusList[i].lat, lng: jsonBusList[i].lon});
+                        id =jsonBusList[i].location_id;
+                        if(jsonBusList[i].speed >= 0)
+                            av_sum += jsonBusList[i].speed;
+                        av_count += 1;
                     }
                     addMarker(jsonBusList[i].lat, jsonBusList[i].lon, [jsonBusList[i].id, jsonBusList[i].location_id], map);
                 }
                 
+                
                 if(!/*[[${allFlag}]]*/){
+                    //calculate average speed of selected bus
+                    if(av_sum!=0 && av_count!=0){
+                        averageSpeed = av_sum/av_count;
+                    }
+                         
+                    document.getElementById("average_speed").innerHTML = "Average speed: " + averageSpeed;
+                    document.getElementById("current_bus").innerHTML = "Current Bus: "+id; 
                     var flightPath = new google.maps.Polyline({
                         map: map,
                         path: busPath,
@@ -448,6 +466,7 @@ The above copyright notice and this permission notice shall be included in all c
                         strokeWeight: 3
                       });
                 }
+      
 
                 /*]]>*/
             }
