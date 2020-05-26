@@ -5,6 +5,14 @@ pipeline {
     }
 
   }
+      stage('Build Docker image'){
+      steps{
+          sh "docker build -t esp13-service-layer ."
+          sh "docker tag esp13-service-layer 192.168.160.99:5000/esp13-service-layer"
+          sh "docker push 192.168.160.99:5000/esp13-service-layer"
+      }
+    }
+    
   stages {
     stage('Initialize') {
       steps {
@@ -19,6 +27,7 @@ mvn -f BusFindPorto/pom.xml clean'''
         sh 'mvn -f BusFindPorto/pom.xml validate'
       }
     }
+
 
     stage('Compile') {
       steps {
