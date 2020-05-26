@@ -5,10 +5,10 @@
 
     <groupId>pt.ua.busfind</groupId>
     <artifactId>busfind</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.1</version>
     <packaging>jar</packaging>
 
-    <name>BusFindPorto</name>
+    <name>busfind</name>
     <description>Real Time Bus Tracking System</description>
 
     <parent>
@@ -23,6 +23,14 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>1.8</java.version>
     </properties>
+
+    <distributionManagement>
+        <repository>
+            <id>central</id>
+            <name>c04a282c7a6d-releases</name>
+            <url>http://192.168.160.99:8081/artifactory/libs-release</url>
+        </repository>
+    </distributionManagement>
 
     <dependencies>
         <dependency>
