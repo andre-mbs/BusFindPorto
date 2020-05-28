@@ -58,6 +58,13 @@ mvn -f BusFindPorto/pom.xml clean'''
         sh 'mvn -f BusFindPorto/pom.xml install'
       }
     }
+
+    stage('Artifactory Deployment') {
+            steps {
+                sh 'mvn deploy -f service-layer/pom.xml -s service-layer/settings.xml'
+            }
+        }
+        
   stage('Build Docker image'){
       steps{
           sh "docker build -t esp13-service-layer ."
