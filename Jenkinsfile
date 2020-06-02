@@ -59,6 +59,11 @@ mvn -f BusFindPorto/pom.xml clean'''
       }
     }
 
+    stage('Artifactory Deployment') {
+            steps {
+                sh 'mvn deploy -f BusFindPorto/pom.xml -s BusFindPorto/settings.xml'
+            }
+        }
 
   stage('Build Docker image'){
       steps{
@@ -67,5 +72,13 @@ mvn -f BusFindPorto/pom.xml clean'''
           sh "docker push 192.168.160.99:5000/esp13-service-layer"
       }
     }
-
+    stage('Runtime Deployment') { 
+            steps {
+                sshagent(credentials: ['esp13_ssh_credentials']){
+                    sh "ssh -o 'StrictHostKeyChecking=no' -l esp13 192.168.160.103 docker rm -f esp13-service-layer"
+                    sh "ssh -o 'StrictHostKeyChecking=no' -l esp13 192.168.160.103 docker run -d -p 11000:11080 --name esp13-service-layer 192.168.160.99:5000/esp13-service-layer"
+                }
+            }
+  }
+  }
 }
