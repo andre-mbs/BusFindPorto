@@ -67,7 +67,7 @@ mvn -f BusFindPorto/pom.xml clean'''
 
   stage('Build Docker image'){
       steps{
-        	sh "ssh -o StrictHostKeyChecking=no -l esp13 192.168.160.103 uname -a"
+	  sh "ssh -o 'StrictHostKeyChecking=no' -l esp13 192.168.160.103 uname -a"
           sh 'export DOCKER_HOST="ssh://esp13@192.168.160.103'
           sh "docker build -t esp13-service-layer ."
           sh "docker tag esp13-service-layer 192.168.160.99:5000/"
