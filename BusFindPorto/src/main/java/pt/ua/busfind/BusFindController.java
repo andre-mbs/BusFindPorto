@@ -2,10 +2,13 @@ package pt.ua.busfind;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -65,12 +68,13 @@ public class BusFindController {
         Iterable<Bus> busList = br.findAll();
         List<Integer> ids = getLocationIds(busList);
         model.addAttribute("ids", ids);
-
+        
         return "maps";
     }
 
     @PostMapping("maps")
-    public String maps(Model model, @RequestParam(name = "nodeID", required = false, defaultValue = "all") String locationId) {
+    public String maps(Model model, @RequestParam(name = "nodeID", required = false, defaultValue = "all") String locationId,
+                                    @RequestParam(name = "time", required = false, defaultValue = "all") String time) {
         System.out.println("From the controller: maps");
 
         boolean allFag = false;
@@ -85,21 +89,33 @@ public class BusFindController {
         if (locationId.equals("all")) {
             try {
                 allFag = true;
-                jsonBusList = mapper.writeValueAsString(busList);
+                if(time.equals("all")){
+                    jsonBusList = mapper.writeValueAsString(busList);
+                }else if(time.equals("latest")){
+                    List<Bus> latestBus = getLatestBus(busList);
+                    jsonBusList = mapper.writeValueAsString(latestBus);
+                }
             } catch (JsonProcessingException ex) {
                 Logger.getLogger(BusFindController.class.getName()).log(Level.SEVERE, null, ex);
             }
         } else {
             try {
-                List<Bus> busListFiltered = getBusByLocationId(busList, Integer.parseInt(locationId));
-                jsonBusList = mapper.writeValueAsString(busListFiltered);  
+                if(time.equals("all")){
+                    List<Bus> busListFiltered = getBusByLocationId(busList, Integer.parseInt(locationId));
+                    jsonBusList = mapper.writeValueAsString(busListFiltered);
+                }else if(time.equals("latest")){
+                    List<Bus> latestBus = getLatestBus(busList, Integer.parseInt(locationId));
+                    jsonBusList = mapper.writeValueAsString(latestBus);
+                }
+                 
             } catch (JsonProcessingException ex) {
                 Logger.getLogger(BusFindController.class.getName()).log(Level.SEVERE, null, ex);
             }
 
         }
         
-        System.out.println(jsonBusList);
+        System.out.println(jsonBusList); 
+        
         model.addAttribute("jsonBusList", jsonBusList);
         model.addAttribute("allFlag", allFag);
         model.addAttribute("locationIdText", locationId);
@@ -127,5 +143,42 @@ public class BusFindController {
         }
 
         return busListFiltered;
+    }
+    
+    private List<Bus> getLatestBus(Iterable<Bus> busList){
+        Map<Integer, Bus> latestBus = new HashMap<>();
+        
+        for (Bus b : busList) {
+            Bus temp = latestBus.get(b.getLocation_id());
+            
+            if(temp == null){
+                latestBus.put(b.getLocation_id(), b);
+            }else{
+                LocalDateTime tempDate = LocalDateTime.parse(temp.getTs().split(" ")[0]+"T"+temp.getTs().split(" ")[1]);
+                LocalDateTime bDate = LocalDateTime.parse(b.getTs().split(" ")[0]+"T"+b.getTs().split(" ")[1]);
+                if(bDate.compareTo(tempDate) > 0){
+                   latestBus.put(b.getLocation_id(), b); 
+                }
+            }
+        }
+        
+        return new ArrayList<>(latestBus.values());
+    }
+    
+    private List<Bus> getLatestBus(Iterable<Bus> busList, int locationId){
+        List<Bus> busListFiltered = getBusByLocationId(busList, locationId);
+        Bus latestBus = busListFiltered.get(0);
+        
+        for (Bus b : busListFiltered) {
+            LocalDateTime latestDate = LocalDateTime.parse(latestBus.getTs().split(" ")[0]+"T"+latestBus.getTs().split(" ")[1]);
+            LocalDateTime newDate = LocalDateTime.parse(b.getTs().split(" ")[0]+"T"+b.getTs().split(" ")[1]);
+            if(newDate.compareTo(latestDate) > 0){
+                latestBus = b;
+            }
+        }
+        
+        List<Bus> latestBusList = new ArrayList<>();
+        latestBusList.add(latestBus);
+        return latestBusList;
     }
 }

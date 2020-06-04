@@ -128,28 +128,42 @@ The above copyright notice and this permission notice shall be included in all c
                 <div class="content">
                     <div class="container-fluid">
                         <div class="row" style="position: relative;">
-                            <div class="col-lg-2 my-auto">
+                            <div class="col-lg-4 my-auto">
                                 <div class="form-group">
                                     <form id="search-form" method="post" th:object="${selectedID}">
-                                        <label for="sel1">Bus Number: </label>
-                                        <select class="form-control" id="nodeID" name="nodeID">
-                                            <option value="all">All</option>
-                                            <option th:each="id : ${ids}" th:value="${id}" th:utext="${id}"/>
-                                        </select>
+                                        <div class="row">
+                                            <div class="col-lg">
+                                                <label for="sel1">Bus Number: </label>
+                                                <select class="form-control" id="nodeID" name="nodeID">
+                                                    <option value="all">All</option>
+                                                    <option th:each="id : ${ids}" th:value="${id}" th:utext="${id}"/>
+                                                </select>
+                                            </div>
+                                            <div class="col-lg">
+                                                <label for="sel1">Time Restrictions: </label>
+                                                <select class="form-control" id="time" name="time">
+                                                    <option value="all">All</option>
+                                                    <option value="latest">Latest</option>
+                                                </select>
+                                            </div>                                            
+                                        </div>
                                     </form>
                                 </div>
                             </div>
                             <div class="col-lg-1 my-auto">
                                 <button type="submit" form="search-form" class="btn btn-primary">Search</button>
                             </div>
-                            <div class="col-lg-4 my-auto">
+                            <div class="col-lg-2 my-auto">
                                 <h3 style="text-align: right;" id="current_bus"></h3>
+
+                            </div>
+                            <div class="col-lg my-auto">
                                 <h3 style="text-align: right;" id="average_speed"> </h3>
 
                             </div>
-                           <!--<div class="col-lg-5 my-auto">
-                                <h3 style="text-align: left;" th:utext="${locationIdText}"></h3>
-                            </div>-->
+                            <!--<div class="col-lg-5 my-auto">
+                                 <h3 style="text-align: left;" th:utext="${locationIdText}"></h3>
+                             </div>-->
                         </div>
                         <div class="row">
                             <div class="col-sm-12">
@@ -241,248 +255,212 @@ The above copyright notice and this permission notice shall be included in all c
         <script src="/demo/demo.js"></script>
         <script>
                                 $(document).ready(function () {
-                                    $().ready(function () {
-                                        $sidebar = $('.sidebar');
+                                $().ready(function () {
+                                $sidebar = $('.sidebar');
+                                $sidebar_img_container = $sidebar.find('.sidebar-background');
+                                $full_page = $('.full-page');
+                                $sidebar_responsive = $('body > .navbar-collapse');
+                                window_width = $(window).width();
+                                fixed_plugin_open = $('.sidebar .sidebar-wrapper .nav li.active a p').html();
+                                if (window_width > 767 && fixed_plugin_open == 'Dashboard') {
+                                if ($('.fixed-plugin .dropdown').hasClass('show-dropdown')) {
+                                $('.fixed-plugin .dropdown').addClass('open');
+                                }
 
-                                        $sidebar_img_container = $sidebar.find('.sidebar-background');
+                                }
 
-                                        $full_page = $('.full-page');
+                                $('.fixed-plugin a').click(function (event) {
+                                // Alex if we click on switch, stop propagation of the event, so the dropdown will not be hide, otherwise we set the  section active
+                                if ($(this).hasClass('switch-trigger')) {
+                                if (event.stopPropagation) {
+                                event.stopPropagation();
+                                } else if (window.event) {
+                                window.event.cancelBubble = true;
+                                }
+                                }
+                                });
+                                $('.fixed-plugin .active-color span').click(function () {
+                                $full_page_background = $('.full-page-background');
+                                $(this).siblings().removeClass('active');
+                                $(this).addClass('active');
+                                var new_color = $(this).data('color');
+                                if ($sidebar.length != 0) {
+                                $sidebar.attr('data-color', new_color);
+                                }
 
-                                        $sidebar_responsive = $('body > .navbar-collapse');
+                                if ($full_page.length != 0) {
+                                $full_page.attr('filter-color', new_color);
+                                }
 
-                                        window_width = $(window).width();
+                                if ($sidebar_responsive.length != 0) {
+                                $sidebar_responsive.attr('data-color', new_color);
+                                }
+                                });
+                                $('.fixed-plugin .background-color .badge').click(function () {
+                                $(this).siblings().removeClass('active');
+                                $(this).addClass('active');
+                                var new_color = $(this).data('background-color');
+                                if ($sidebar.length != 0) {
+                                $sidebar.attr('data-background-color', new_color);
+                                }
+                                });
+                                $('.fixed-plugin .img-holder').click(function () {
+                                $full_page_background = $('.full-page-background');
+                                $(this).parent('li').siblings().removeClass('active');
+                                $(this).parent('li').addClass('active');
+                                var new_image = $(this).find("img").attr('src');
+                                if ($sidebar_img_container.length != 0 && $('.switch-sidebar-image input:checked').length != 0) {
+                                $sidebar_img_container.fadeOut('fast', function () {
+                                $sidebar_img_container.css('background-image', 'url("' + new_image + '")');
+                                $sidebar_img_container.fadeIn('fast');
+                                });
+                                }
 
-                                        fixed_plugin_open = $('.sidebar .sidebar-wrapper .nav li.active a p').html();
+                                if ($full_page_background.length != 0 && $('.switch-sidebar-image input:checked').length != 0) {
+                                var new_image_full_page = $('.fixed-plugin li.active .img-holder').find('img').data('src');
+                                $full_page_background.fadeOut('fast', function () {
+                                $full_page_background.css('background-image', 'url("' + new_image_full_page + '")');
+                                $full_page_background.fadeIn('fast');
+                                });
+                                }
 
-                                        if (window_width > 767 && fixed_plugin_open == 'Dashboard') {
-                                            if ($('.fixed-plugin .dropdown').hasClass('show-dropdown')) {
-                                                $('.fixed-plugin .dropdown').addClass('open');
-                                            }
+                                if ($('.switch-sidebar-image input:checked').length == 0) {
+                                var new_image = $('.fixed-plugin li.active .img-holder').find("img").attr('src');
+                                var new_image_full_page = $('.fixed-plugin li.active .img-holder').find('img').data('src');
+                                $sidebar_img_container.css('background-image', 'url("' + new_image + '")');
+                                $full_page_background.css('background-image', 'url("' + new_image_full_page + '")');
+                                }
 
-                                        }
+                                if ($sidebar_responsive.length != 0) {
+                                $sidebar_responsive.css('background-image', 'url("' + new_image + '")');
+                                }
+                                });
+                                $('.switch-sidebar-image input').change(function () {
+                                $full_page_background = $('.full-page-background');
+                                $input = $(this);
+                                if ($input.is(':checked')) {
+                                if ($sidebar_img_container.length != 0) {
+                                $sidebar_img_container.fadeIn('fast');
+                                $sidebar.attr('data-image', '#');
+                                }
 
-                                        $('.fixed-plugin a').click(function (event) {
-                                            // Alex if we click on switch, stop propagation of the event, so the dropdown will not be hide, otherwise we set the  section active
-                                            if ($(this).hasClass('switch-trigger')) {
-                                                if (event.stopPropagation) {
-                                                    event.stopPropagation();
-                                                } else if (window.event) {
-                                                    window.event.cancelBubble = true;
-                                                }
-                                            }
-                                        });
+                                if ($full_page_background.length != 0) {
+                                $full_page_background.fadeIn('fast');
+                                $full_page.attr('data-image', '#');
+                                }
 
-                                        $('.fixed-plugin .active-color span').click(function () {
-                                            $full_page_background = $('.full-page-background');
+                                background_image = true;
+                                } else {
+                                if ($sidebar_img_container.length != 0) {
+                                $sidebar.removeAttr('data-image');
+                                $sidebar_img_container.fadeOut('fast');
+                                }
 
-                                            $(this).siblings().removeClass('active');
-                                            $(this).addClass('active');
+                                if ($full_page_background.length != 0) {
+                                $full_page.removeAttr('data-image', '#');
+                                $full_page_background.fadeOut('fast');
+                                }
 
-                                            var new_color = $(this).data('color');
+                                background_image = false;
+                                }
+                                });
+                                $('.switch-sidebar-mini input').change(function () {
+                                $body = $('body');
+                                $input = $(this);
+                                if (md.misc.sidebar_mini_active == true) {
+                                $('body').removeClass('sidebar-mini');
+                                md.misc.sidebar_mini_active = false;
+                                $('.sidebar .sidebar-wrapper, .main-panel').perfectScrollbar();
+                                } else {
 
-                                            if ($sidebar.length != 0) {
-                                                $sidebar.attr('data-color', new_color);
-                                            }
+                                $('.sidebar .sidebar-wrapper, .main-panel').perfectScrollbar('destroy');
+                                setTimeout(function () {
+                                $('body').addClass('sidebar-mini');
+                                md.misc.sidebar_mini_active = true;
+                                }, 300);
+                                }
 
-                                            if ($full_page.length != 0) {
-                                                $full_page.attr('filter-color', new_color);
-                                            }
-
-                                            if ($sidebar_responsive.length != 0) {
-                                                $sidebar_responsive.attr('data-color', new_color);
-                                            }
-                                        });
-
-                                        $('.fixed-plugin .background-color .badge').click(function () {
-                                            $(this).siblings().removeClass('active');
-                                            $(this).addClass('active');
-
-                                            var new_color = $(this).data('background-color');
-
-                                            if ($sidebar.length != 0) {
-                                                $sidebar.attr('data-background-color', new_color);
-                                            }
-                                        });
-
-                                        $('.fixed-plugin .img-holder').click(function () {
-                                            $full_page_background = $('.full-page-background');
-
-                                            $(this).parent('li').siblings().removeClass('active');
-                                            $(this).parent('li').addClass('active');
-
-
-                                            var new_image = $(this).find("img").attr('src');
-
-                                            if ($sidebar_img_container.length != 0 && $('.switch-sidebar-image input:checked').length != 0) {
-                                                $sidebar_img_container.fadeOut('fast', function () {
-                                                    $sidebar_img_container.css('background-image', 'url("' + new_image + '")');
-                                                    $sidebar_img_container.fadeIn('fast');
-                                                });
-                                            }
-
-                                            if ($full_page_background.length != 0 && $('.switch-sidebar-image input:checked').length != 0) {
-                                                var new_image_full_page = $('.fixed-plugin li.active .img-holder').find('img').data('src');
-
-                                                $full_page_background.fadeOut('fast', function () {
-                                                    $full_page_background.css('background-image', 'url("' + new_image_full_page + '")');
-                                                    $full_page_background.fadeIn('fast');
-                                                });
-                                            }
-
-                                            if ($('.switch-sidebar-image input:checked').length == 0) {
-                                                var new_image = $('.fixed-plugin li.active .img-holder').find("img").attr('src');
-                                                var new_image_full_page = $('.fixed-plugin li.active .img-holder').find('img').data('src');
-
-                                                $sidebar_img_container.css('background-image', 'url("' + new_image + '")');
-                                                $full_page_background.css('background-image', 'url("' + new_image_full_page + '")');
-                                            }
-
-                                            if ($sidebar_responsive.length != 0) {
-                                                $sidebar_responsive.css('background-image', 'url("' + new_image + '")');
-                                            }
-                                        });
-
-                                        $('.switch-sidebar-image input').change(function () {
-                                            $full_page_background = $('.full-page-background');
-
-                                            $input = $(this);
-
-                                            if ($input.is(':checked')) {
-                                                if ($sidebar_img_container.length != 0) {
-                                                    $sidebar_img_container.fadeIn('fast');
-                                                    $sidebar.attr('data-image', '#');
-                                                }
-
-                                                if ($full_page_background.length != 0) {
-                                                    $full_page_background.fadeIn('fast');
-                                                    $full_page.attr('data-image', '#');
-                                                }
-
-                                                background_image = true;
-                                            } else {
-                                                if ($sidebar_img_container.length != 0) {
-                                                    $sidebar.removeAttr('data-image');
-                                                    $sidebar_img_container.fadeOut('fast');
-                                                }
-
-                                                if ($full_page_background.length != 0) {
-                                                    $full_page.removeAttr('data-image', '#');
-                                                    $full_page_background.fadeOut('fast');
-                                                }
-
-                                                background_image = false;
-                                            }
-                                        });
-
-                                        $('.switch-sidebar-mini input').change(function () {
-                                            $body = $('body');
-
-                                            $input = $(this);
-
-                                            if (md.misc.sidebar_mini_active == true) {
-                                                $('body').removeClass('sidebar-mini');
-                                                md.misc.sidebar_mini_active = false;
-
-                                                $('.sidebar .sidebar-wrapper, .main-panel').perfectScrollbar();
-
-                                            } else {
-
-                                                $('.sidebar .sidebar-wrapper, .main-panel').perfectScrollbar('destroy');
-
-                                                setTimeout(function () {
-                                                    $('body').addClass('sidebar-mini');
-
-                                                    md.misc.sidebar_mini_active = true;
-                                                }, 300);
-                                            }
-
-                                            // we simulate the window Resize so the charts will get updated in realtime.
-                                            var simulateWindowResize = setInterval(function () {
-                                                window.dispatchEvent(new Event('resize'));
-                                            }, 180);
-
-                                            // we stop the simulation of Window Resize after the animations are completed
-                                            setTimeout(function () {
-                                                clearInterval(simulateWindowResize);
-                                            }, 1000);
-
-                                        });
-                                    });
+                                // we simulate the window Resize so the charts will get updated in realtime.
+                                var simulateWindowResize = setInterval(function () {
+                                window.dispatchEvent(new Event('resize'));
+                                }, 180);
+                                // we stop the simulation of Window Resize after the animations are completed
+                                setTimeout(function () {
+                                clearInterval(simulateWindowResize);
+                                }, 1000);
+                                });
+                                });
                                 });
         </script>
         <script>
             $(document).ready(function () {
-                // Javascript method's body can be found in assets/js/demos.js
-                md.initDashboardPageCharts();
-
+            // Javascript method's body can be found in assets/js/demos.js
+            md.initDashboardPageCharts();
             });
         </script>
 
         <script th:inline="javascript">
             function initMap() {
-                var options = {
-                    gestureHandling: 'greedy',
+            var options = {
+            gestureHandling: 'greedy',
                     zoom: 13,
-                    center: {lat: 41.158004, lng: -8.629649}
-                }
+                    center: {lat: 41.158004, lng: - 8.629649}
+            }
 
-                var map = new google.maps.Map(document.getElementById('map'), options);
+            var map = new google.maps.Map(document.getElementById('map'), options);
+            /*<![CDATA[*/
 
-                /*<![CDATA[*/
+            var jsonBusList = JSON.parse(/*[[${jsonBusList}]]*/);
+            var busPath = [];
+            var averageSpeed = 0;
+            var av_sum = 0;
+            var av_count = 0;
+            var id;
+            for (i = 0; i < jsonBusList.length; i++) {
+            if (!/*[[${allFlag}]]*/){
+            busPath.push({lat: jsonBusList[i].lat, lng: jsonBusList[i].lon});
+            id = jsonBusList[i].location_id;
+            if (jsonBusList[i].speed >= 0)
+                    av_sum += jsonBusList[i].speed;
+            av_count += 1;
+            }
+            addMarker(jsonBusList[i].lat, jsonBusList[i].lon, [jsonBusList[i].id, jsonBusList[i].location_id], map);
+            }
 
-                var jsonBusList = JSON.parse(/*[[${jsonBusList}]]*/);
-                var busPath = [];
-                var averageSpeed=0;
-                var av_sum=0;
-                var av_count=0;
-                var id;
-                
-                for (i=0; i<jsonBusList.length; i++) {
-                    if(!/*[[${allFlag}]]*/){
-                        busPath.push({lat: jsonBusList[i].lat, lng: jsonBusList[i].lon});
-                        id =jsonBusList[i].location_id;
-                        if(jsonBusList[i].speed >= 0)
-                            av_sum += jsonBusList[i].speed;
-                        av_count += 1;
-                    }
-                    addMarker(jsonBusList[i].lat, jsonBusList[i].lon, [jsonBusList[i].id, jsonBusList[i].location_id], map);
-                }
-                
-                
-                if(!/*[[${allFlag}]]*/){
-                    //calculate average speed of selected bus
-                    if(av_sum!=0 && av_count!=0){
-                        averageSpeed = av_sum/av_count;
-                    }
-                         
-                    document.getElementById("average_speed").innerHTML = "Average speed: " + averageSpeed;
-                    document.getElementById("current_bus").innerHTML = "Current Bus: "+id; 
-                    var flightPath = new google.maps.Polyline({
-                        map: map,
-                        path: busPath,
-                        geodesic: true,
-                        strokeColor: '#0000FF',
-                        strokeOpacity: 1.0,
-                        strokeWeight: 3
-                      });
-                }
-      
 
-                /*]]>*/
+            if (!/*[[${allFlag}]]*/){
+            //calculate average speed of selected bus
+            if (av_sum != 0 && av_count != 0){
+            averageSpeed = av_sum / av_count;
+            }
+
+            document.getElementById("average_speed").innerHTML = "Average speed: " + averageSpeed;
+            document.getElementById("current_bus").innerHTML = "Current Bus: " + id;
+            var flightPath = new google.maps.Polyline({
+            map: map,
+                    path: busPath,
+                    geodesic: true,
+                    strokeColor: '#0000FF',
+                    strokeOpacity: 1.0,
+                    strokeWeight: 3
+            });
+            }
+
+
+            /*]]>*/
             }
             function addMarker(lat, lng, info, map) {
-                var marker = new google.maps.Marker({
-                    position: {lat: lat, lng: lng},
+            var marker = new google.maps.Marker({
+            position: {lat: lat, lng: lng},
                     map: map,
                     icon: {url: 'https://image.flaticon.com/icons/png/512/1165/1165961.png', scaledSize: new google.maps.Size(30, 30)}
-                });
-
-                var infoWindow = new google.maps.InfoWindow({
-                    content: '<p>Id: ' + info[0] + '</p>' + '<p>Location Id: ' + info[1] + '</p>'
-                });
-                marker.addListener('click', function () {
-                    infoWindow.open(map, marker);
-                });
+            });
+            var infoWindow = new google.maps.InfoWindow({
+            content: '<p>Id: ' + info[0] + '</p>' + '<p>Location Id: ' + info[1] + '</p>'
+            });
+            marker.addListener('click', function () {
+            infoWindow.open(map, marker);
+            });
             }
         </script>
         <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAhqVD46AX9PWogNA0LzAjwQKEKIaVgSbU&callback=initMap"></script>
