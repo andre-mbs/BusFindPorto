@@ -1,9 +1,10 @@
 pipeline {
   agent any
-  
+
   stages {
+    agent { docker { image 'maven:3.6.3-jdk-8' } }
+
     stage('Initialize') {
-      agent { docker { image 'maven:3.6.3-jdk-8' } }
       steps {
         sh '''echo PATH = ${PATH}
               echo M2_HOME = ${M2_HOME}
@@ -12,7 +13,6 @@ pipeline {
     }
 
     stage('Validate') {
-      agent { docker { image 'maven:3.6.3-jdk-8' } }
       steps {
         sh 'mvn -f BusFindPorto/pom.xml validate'
       }
@@ -20,14 +20,12 @@ pipeline {
 
 
     stage('Compile') {
-      agent { docker { image 'maven:3.6.3-jdk-8' } }
       steps {
         sh 'mvn -f BusFindPorto/pom.xml compile'
       }
     }
 
     stage('Test') {
-      agent { docker { image 'maven:3.6.3-jdk-8' } }
       steps {
         sh '''mvn -f BusFindPorto/pom.xml test
 '''
@@ -35,35 +33,30 @@ pipeline {
     }
 
     stage('Package') {
-      agent { docker { image 'maven:3.6.3-jdk-8' } }
       steps {
         sh 'mvn -f BusFindPorto/pom.xml package'
       }
     }
 
     stage('Integration-test') {
-      agent { docker { image 'maven:3.6.3-jdk-8' } }
       steps {
         sh 'mvn -f BusFindPorto/pom.xml integration-test'
       }
     }
 
     stage('Verify') {
-      agent { docker { image 'maven:3.6.3-jdk-8' } }
       steps {
         sh 'mvn -f BusFindPorto/pom.xml verify'
       }
     }
 
     stage('Install') {
-      agent { docker { image 'maven:3.6.3-jdk-8' } }
       steps {
         sh 'mvn -f BusFindPorto/pom.xml install'
       }
     }
 
     stage('Artifactory Deployment') {
-      agent { docker { image 'maven:3.6.3-jdk-8' } }
       steps {
         sh 'mvn deploy -f BusFindPorto/pom.xml -s BusFindPorto/settings.xml'
       }
