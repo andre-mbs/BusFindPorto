@@ -67,6 +67,7 @@ pipeline {
           sshagent(credentials: ['esp13-sshagent']){
             sh "ssh -o 'StrictHostKeyChecking=no' -l esp13 192.168.160.103 uname -a"
             sh "export DOCKER_HOST='ssh://esp13@192.168.160.103'"
+            sh "docker pull curlimages/curl"
             sh "docker build -t esp13-service-layer ."
             sh "docker tag esp13-service-layer 192.168.160.99:5000/"
             sh "docker push 192.168.160.99:5000/esp13-service-layer"
