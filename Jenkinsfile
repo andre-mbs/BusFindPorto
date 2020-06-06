@@ -1,24 +1,18 @@
 pipeline {
-
   agent any
   
-  agent {
-    docker {
-      image 'maven:3.6.3-jdk-8'
-    }
-
-  }
-    
   stages {
     stage('Initialize') {
+      agent { docker { image 'maven:3.6.3-jdk-8' } }
       steps {
         sh '''echo PATH = ${PATH}
-echo M2_HOME = ${M2_HOME}
-mvn -f BusFindPorto/pom.xml clean'''
+              echo M2_HOME = ${M2_HOME}
+              mvn -f BusFindPorto/pom.xml clean'''
       }
     }
 
     stage('Validate') {
+      agent { docker { image 'maven:3.6.3-jdk-8' } }
       steps {
         sh 'mvn -f BusFindPorto/pom.xml validate'
       }
@@ -26,12 +20,14 @@ mvn -f BusFindPorto/pom.xml clean'''
 
 
     stage('Compile') {
+      agent { docker { image 'maven:3.6.3-jdk-8' } }
       steps {
         sh 'mvn -f BusFindPorto/pom.xml compile'
       }
     }
 
     stage('Test') {
+      agent { docker { image 'maven:3.6.3-jdk-8' } }
       steps {
         sh '''mvn -f BusFindPorto/pom.xml test
 '''
@@ -39,34 +35,39 @@ mvn -f BusFindPorto/pom.xml clean'''
     }
 
     stage('Package') {
+      agent { docker { image 'maven:3.6.3-jdk-8' } }
       steps {
         sh 'mvn -f BusFindPorto/pom.xml package'
       }
     }
 
     stage('Integration-test') {
+      agent { docker { image 'maven:3.6.3-jdk-8' } }
       steps {
         sh 'mvn -f BusFindPorto/pom.xml integration-test'
       }
     }
 
     stage('Verify') {
+      agent { docker { image 'maven:3.6.3-jdk-8' } }
       steps {
         sh 'mvn -f BusFindPorto/pom.xml verify'
       }
     }
 
     stage('Install') {
+      agent { docker { image 'maven:3.6.3-jdk-8' } }
       steps {
         sh 'mvn -f BusFindPorto/pom.xml install'
       }
     }
 
     stage('Artifactory Deployment') {
-            steps {
-                sh 'mvn deploy -f BusFindPorto/pom.xml -s BusFindPorto/settings.xml'
-            }
-        }
+      agent { docker { image 'maven:3.6.3-jdk-8' } }
+      steps {
+        sh 'mvn deploy -f BusFindPorto/pom.xml -s BusFindPorto/settings.xml'
+      }
+    }
 
   stage('Build Docker image'){
       steps{
@@ -80,12 +81,12 @@ mvn -f BusFindPorto/pom.xml clean'''
       }
     }
     stage('Runtime Deployment') { 
-            steps {
-                sshagent(credentials: ['esp13-sshagent']){
-                    sh "ssh -o 'StrictHostKeyChecking=no' -l esp13 192.168.160.103 docker rm -f esp13-service-layer"
-                    sh "ssh -o 'StrictHostKeyChecking=no' -l esp13 192.168.160.103 docker run -d -p 11000:11080 --name esp13-service-layer 192.168.160.99:5000/esp13-service-layer"
-                }
-            }
+      steps {
+          sshagent(credentials: ['esp13-sshagent']){
+              sh "ssh -o 'StrictHostKeyChecking=no' -l esp13 192.168.160.103 docker rm -f esp13-service-layer"
+              sh "ssh -o 'StrictHostKeyChecking=no' -l esp13 192.168.160.103 docker run -d -p 11000:11080 --name esp13-service-layer 192.168.160.99:5000/esp13-service-layer"
+          }
+      }
     }
   }
 }
