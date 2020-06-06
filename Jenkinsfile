@@ -12,6 +12,7 @@ pipeline {
       }
     }
 
+
     stage('Validate') {
       steps {
         sh 'mvn -f BusFindPorto/pom.xml validate'
