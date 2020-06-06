@@ -1,4 +1,7 @@
 pipeline {
+
+  agent any
+  
   agent {
     docker {
       image 'maven:3.6.3-jdk-8'
