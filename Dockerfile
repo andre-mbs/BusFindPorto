@@ -1,5 +1,4 @@
-FROM adoptopenjdk/openjdk8-openj9:alpine-slim
-
+FROM ubuntu:16.04
 
 WORKDIR /usr/local/bin
 
