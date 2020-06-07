@@ -40,14 +40,4 @@ public class Consumer {
         
     }
 
-
-    @KafkaListener(topics = "esp13_tp1", groupId = "esp13")
-    public void topic(String message) throws JsonProcessingException, JSONException {
-
-        JSONObject jsonObject = new JSONObject(message);
-        Gson gson = new Gson();
-        Bus b = gson.fromJson(jsonObject.toString(), Bus.class);
-        System.out.println("Received Message: " + jsonObject.toString());
-
-    }
 }
