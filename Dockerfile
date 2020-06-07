@@ -1,7 +1,7 @@
 FROM ubuntu:16.04
 
 RUN apt-get update && \
-    apt-get -y install sudo curl
+    apt-get -y install sudo curl default-jre
 
 RUN adduser --disabled-password --gecos '' newuser \
     && adduser newuser sudo \
@@ -13,7 +13,5 @@ USER newuser
 WORKDIR /app
 
 RUN curl -X GET 192.168.160.99:8082/artifactory/libs-release/pt/ua/busfind/busfind/0.0.1/busfind-0.0.1.jar --output busfind-0.0.1.jar
-
-FROM java:8-jdk-alpine
 
 ENTRYPOINT ["java","-jar", "busfind-0.0.1.jar"]
