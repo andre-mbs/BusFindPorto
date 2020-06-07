@@ -20,4 +20,4 @@ RUN ls
 ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64/
 RUN export JAVA_HOME
 
-CMD ["java","-jar", "/app/busfind-0.0.1.jar"]
+CMD "java","-jar", "busfind-0.0.1.jar"
