@@ -76,7 +76,7 @@ pipeline {
     stage('Runtime Deployment') { 
       steps {
           sshagent(credentials: ['esp13-sshagent']){
-              sh "ssh -o 'StrictHostKeyChecking=no' -l esp13 192.168.160.103 docker rm -f esp13-service-layer"
+              // sh "ssh -o 'StrictHostKeyChecking=no' -l esp13 192.168.160.103 docker rm -f esp13-service-layer"
               sh "ssh -o 'StrictHostKeyChecking=no' -l esp13 192.168.160.103 docker run -d -p 11000:11080 --name esp13-service-layer 192.168.160.99:5000/esp13-service-layer"
           }
       }
