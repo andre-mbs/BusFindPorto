@@ -38,12 +38,4 @@ public class KafkaConfiguration {
         return new KafkaTemplate<>(producerFactory());
     }
 
-    @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, String>
-    kafkaListenerContainerFactory() {
-        ConcurrentKafkaListenerContainerFactory<String, String> factory =
-                new ConcurrentKafkaListenerContainerFactory<>();
-        factory.setProducerFactory(producerFactory());
-        return factory;
-    }
 }
