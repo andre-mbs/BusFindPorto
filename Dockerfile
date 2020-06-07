@@ -1,6 +1,5 @@
 FROM adoptopenjdk/openjdk8-openj9:alpine-slim
 
-RUN mkdir /usr/local/bin
 
 WORKDIR /usr/local/bin
 
