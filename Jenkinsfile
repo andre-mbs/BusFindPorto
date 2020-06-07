@@ -77,7 +77,7 @@ pipeline {
       steps {
           sshagent(credentials: ['esp13-sshagent']){
               sh "ssh -o 'StrictHostKeyChecking=no' -l esp13 192.168.160.103 docker rm -f esp13-service-layer"
-                                          sh "ssh -o 'StrictHostKeyChecking=no' -l esp13 192.168.160.103 docker run -d --log-driver json-file --log-opt max-file=5 --log-opt max-size=10m -p 42080:8080 --name esp13-service-layer 192.168.160.99:5000/esp13-service-layer"
+              sh "ssh -o 'StrictHostKeyChecking=no' -l esp13 192.168.160.103 docker run -d --log-driver json-file --log-opt max-file=5 --log-opt max-size=10m -p 11000:11080 --name esp13-service-layer 192.168.160.99:5000/esp13-service-layer"
 
               //sh "ssh -o 'StrictHostKeyChecking=no' -l esp13 192.168.160.103 docker run -d -p 11000:11080 --name esp13-service-layer 192.168.160.99:5000/esp13-service-layer"
           }
