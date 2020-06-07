@@ -17,9 +17,7 @@ RUN curl -X GET 192.168.160.99:8082/artifactory/libs-release/pt/ua/busfind/busfi
 RUN pwd
 RUN ls
 
-FROM openjdk:8-jre-alpine
-
 ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64/
 RUN export JAVA_HOME
 
-CMD ["java","-jar", "busfind-0.0.1.jar"]
+CMD ["java","-jar", "/app/busfind-0.0.1.jar"]
